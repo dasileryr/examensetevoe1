@@ -1,0 +1,267 @@
+<Window x:Class="FileDownloader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:FileDownloader.Converters"
+        Title="Менеджер загрузок" Height="700" Width="1200"
+        Background="{StaticResource BackgroundColor}">
+    <Window.Resources>
+        <converters:ProgressTextConverter x:Key="ProgressTextConverter"/>
+        <converters:TagsToStringConverter x:Key="TagsToStringConverter"/>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Панель добавления новой загрузки -->
+        <GroupBox Grid.Row="0" Header="Новая загрузка" Margin="0,0,0,10" Padding="10" Background="{StaticResource CardColor}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="URL:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="UrlTextBox" Width="400" Margin="5"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Путь сохранения:" VerticalAlignment="Center" Margin="5"/>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" x:Name="SavePathTextBox" Width="350" Margin="5"/>
+                    <Button Grid.Column="1" Content="Обзор..." x:Name="BrowseButton" Click="BrowseButton_Click" Margin="5" Padding="10,8"/>
+                </Grid>
+
+                <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Потоков:" VerticalAlignment="Center" Margin="5"/>
+                    <TextBox Grid.Column="1" x:Name="ThreadCountTextBox" Text="4" Width="60" Margin="5"/>
+
+                    <TextBlock Grid.Column="2" Text="Теги (через запятую):" VerticalAlignment="Center" Margin="5"/>
+                    <TextBox Grid.Column="3" x:Name="TagsTextBox" Margin="5"/>
+
+                    <Button Grid.Column="4" Content="Добавить загрузку" x:Name="AddDownloadButton" 
+                            Click="AddDownloadButton_Click" Margin="5" Padding="15,8"/>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <!-- Панель поиска -->
+        <GroupBox Grid.Row="1" Header="Поиск по тегам" Margin="0,0,0,10" Padding="10" Background="{StaticResource CardColor}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Теги:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Column="1" x:Name="SearchTagsTextBox" Margin="5" TextChanged="SearchTagsTextBox_TextChanged"/>
+                <Button Grid.Column="2" Content="Очистить" x:Name="ClearSearchButton" Click="ClearSearchButton_Click" Margin="5" Padding="15,8"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- Список загрузок -->
+        <TabControl Grid.Row="2" Background="{StaticResource CardColor}">
+            <TabItem Header="Все загрузки">
+                <ListBox x:Name="AllDownloadsListBox" SelectionChanged="DownloadsListBox_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" Margin="5" Padding="10" Background="White">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding FileName}" FontWeight="Bold" FontSize="14"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StatusText}" 
+                                               FontWeight="Bold" Margin="5,0,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="Black"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="0">
+                                                        <Setter Property="Foreground" Value="Gray"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="1">
+                                                        <Setter Property="Foreground" Value="Blue"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="2">
+                                                        <Setter Property="Foreground" Value="Orange"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="3">
+                                                        <Setter Property="Foreground" Value="Green"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="4">
+                                                        <Setter Property="Foreground" Value="Red"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="5">
+                                                        <Setter Property="Foreground" Value="Red"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Url}" FontSize="11" Foreground="Gray" TextTrimming="CharacterEllipsis"/>
+
+                                    <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                 Value="{Binding Progress}" Height="20" Margin="0,5"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" FontSize="11" Margin="0,5,0,0">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0:N0} / {1:N0} байт ({2:F1}%)">
+                                                <Binding Path="DownloadedBytes"/>
+                                                <Binding Path="TotalBytes"/>
+                                                <Binding Path="Progress"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock FontSize="10" Foreground="Blue" Margin="5,0">
+                                            <TextBlock.Text>
+                                                <Binding Path="Tags" Converter="{StaticResource TagsToStringConverter}"/>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+
+            <TabItem Header="Текущие">
+                <ListBox x:Name="ActiveDownloadsListBox" SelectionChanged="DownloadsListBox_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" Margin="5" Padding="10" Background="White">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding FileName}" FontWeight="Bold" FontSize="14"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StatusText}" FontWeight="Bold" Margin="5,0,0,0"/>
+
+                                    <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                 Value="{Binding Progress}" Height="20" Margin="0,5"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" FontSize="11" Margin="0,5,0,0">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0:N0} / {1:N0} байт ({2:F1}%)">
+                                                <Binding Path="DownloadedBytes"/>
+                                                <Binding Path="TotalBytes"/>
+                                                <Binding Path="Progress"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+
+            <TabItem Header="Завершённые">
+                <ListBox x:Name="CompletedDownloadsListBox" SelectionChanged="DownloadsListBox_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" Margin="5" Padding="10" Background="White">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding FileName}" FontWeight="Bold" FontSize="14"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StatusText}" 
+                                               Foreground="Green" FontWeight="Bold" Margin="5,0,0,0"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                               Text="{Binding SavePath}" FontSize="11" Foreground="Gray"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+
+            <TabItem Header="Ошибки">
+                <ListBox x:Name="FailedDownloadsListBox" SelectionChanged="DownloadsListBox_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1" Margin="5" Padding="10" Background="White">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding FileName}" FontWeight="Bold" FontSize="14"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StatusText}" 
+                                               Foreground="Red" FontWeight="Bold" Margin="5,0,0,0"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                               Text="{Binding ErrorMessage}" FontSize="11" Foreground="Red" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+        </TabControl>
+
+        <!-- Панель управления -->
+        <Border Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" 
+                Background="{StaticResource CardColor}" Padding="10" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Пауза" x:Name="PauseButton" Click="PauseButton_Click" Margin="5" IsEnabled="False"/>
+                <Button Content="Возобновить" x:Name="ResumeButton" Click="ResumeButton_Click" Margin="5" IsEnabled="False"/>
+                <Button Content="Остановить" x:Name="StopButton" Click="StopButton_Click" Margin="5" IsEnabled="False"/>
+                <Button Content="Удалить" x:Name="DeleteButton" Click="DeleteButton_Click" Margin="5" IsEnabled="False" 
+                        Style="{StaticResource ErrorButton}"/>
+                <Button Content="Переименовать" x:Name="RenameButton" Click="RenameButton_Click" Margin="5" IsEnabled="False"/>
+                <Button Content="Переместить" x:Name="MoveButton" Click="MoveButton_Click" Margin="5" IsEnabled="False"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
+
