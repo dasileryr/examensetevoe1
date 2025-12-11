@@ -29,7 +29,7 @@
         <Setter Property="Background" Value="{StaticResource SuccessColor}"/>
     </Style>
     
-    <Style x:Key="ErrorButton" TargetType="Button" BasedOn="{StaticResource {StaticResource {x:Type Button}}}">
+    <Style x:Key="ErrorButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Background" Value="{StaticResource ErrorColor}"/>
     </Style>
     
