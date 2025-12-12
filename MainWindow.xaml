@@ -128,14 +128,14 @@
                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Url}" FontSize="11" Foreground="Gray" TextTrimming="CharacterEllipsis"/>
 
                                     <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                 Value="{Binding Progress}" Height="20" Margin="0,5"/>
+                                                 Value="{Binding Progress, Mode=OneWay}" Height="20" Margin="0,5"/>
 
                                     <TextBlock Grid.Row="3" Grid.Column="0" FontSize="11" Margin="0,5,0,0">
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="{}{0:N0} / {1:N0} байт ({2:F1}%)">
                                                 <Binding Path="DownloadedBytes"/>
                                                 <Binding Path="TotalBytes"/>
-                                                <Binding Path="Progress"/>
+                                                <Binding Path="Progress" Mode="OneWay"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -174,14 +174,14 @@
                                     <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StatusText}" FontWeight="Bold" Margin="5,0,0,0"/>
 
                                     <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                                 Value="{Binding Progress}" Height="20" Margin="0,5"/>
+                                                 Value="{Binding Progress, Mode=OneWay}" Height="20" Margin="0,5"/>
 
                                     <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" FontSize="11" Margin="0,5,0,0">
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="{}{0:N0} / {1:N0} байт ({2:F1}%)">
                                                 <Binding Path="DownloadedBytes"/>
                                                 <Binding Path="TotalBytes"/>
-                                                <Binding Path="Progress"/>
+                                                <Binding Path="Progress" Mode="OneWay"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
